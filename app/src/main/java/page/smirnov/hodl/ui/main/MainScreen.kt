@@ -190,15 +190,6 @@ private fun Header(
         style = MaterialTheme.typography.headlineLarge,
         textAlign = TextAlign.Center
     )
-
-    // Fiat Balance
-    // FIXME: TODO or remove
-    Text(
-        text = "~ 134,000 USD",
-        style = MaterialTheme.typography.bodyLarge,
-        color = MaterialTheme.colorScheme.secondary,
-        textAlign = TextAlign.Center
-    )
 }
 
 @Composable
