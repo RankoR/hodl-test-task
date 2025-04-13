@@ -15,7 +15,7 @@ jobs:
 
     strategy:
       matrix:
-        api-level: [ 33 ]
+        api-level: [ 32 ]
 
     steps:
       - name: Checkout code
@@ -76,7 +76,7 @@ jobs:
           force-avd-creation: false
           emulator-options: -no-snapshot-save -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           disable-animations: true
-          script: ./gradlew connectedCheck
+          script: ./gradlew connectedAndroidTest
 
       - name: Build debug APK
         run: ./gradlew --no-daemon :app:assembleDebug --stacktrace
