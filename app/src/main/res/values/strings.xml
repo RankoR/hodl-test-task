@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Bitcoin wallet</string>
+
+    <!-- Main screen -->
+    <string name="title_wallet_screen">Bitcoin Wallet</string>
+    <string name="hint_amount_to_send">Amount to send (BTC)</string>
+    <string name="hint_receiver_address">Bitcoin address</string>
+    <string name="title_send_button">Send</string>
+    <string name="content_description_paste_address">Paste address from clipboard</string>
+    <string name="title_wallet_balance_loading">Loading balance…</string>
+    <string name="format_wallet_balance_btc">%1$.6f BTC</string>
+    <string name="format_transaction_fee">Fee: %1$.6f BTC</string>
+
+    <string name="error_invalid_amount">Invalid amount</string>
+    <string name="error_not_enough_funds">Not enough funds</string>
+    <string name="error_invalid_address">Invalid address</string>
+
+    <string name="title_transaction_success">Your funds have been sent!</string>
+    <string name="label_transaction_id">Your transaction ID is </string>
+    <string name="title_send_more_button">Send more</string>
+
+    <string name="error_generic">An error occurred</string>
+    <string name="error_dismiss_button">Dismiss</string>
+</resources>
