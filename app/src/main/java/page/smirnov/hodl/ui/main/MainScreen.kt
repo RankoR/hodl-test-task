@@ -19,6 +19,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
@@ -73,7 +74,7 @@ fun MainScreen(
                 balance = balance,
             )
 
-            Spacer(modifier = Modifier.height(48.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             AmountInput(
                 amount = amount,
@@ -82,7 +83,7 @@ fun MainScreen(
                 onAction = { focusManager.moveFocus(FocusDirection.Down) },
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             AddressInput(
                 address = address,
@@ -99,7 +100,7 @@ fun MainScreen(
 
             FeeLabel(fee = fee)
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             // Send Button
             Button(
@@ -240,33 +241,41 @@ private fun AddressInput(
 private fun FeeLabel(
     fee: BigDecimal?,
 ) {
-    // TODO: Moves layout on visibility change
-    if (fee != null) {
-        Text(
-            text = stringResource(R.string.format_transaction_fee, fee),
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.secondary,
-            textAlign = TextAlign.Center,
-        )
-    }
+    val text = fee?.let { stringResource(R.string.format_transaction_fee, it) } ?: " "
+    val alpha = if (fee != null) 1f else 0f
+
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyLarge,
+        color = MaterialTheme.colorScheme.secondary,
+        textAlign = TextAlign.Center,
+        modifier = Modifier
+            .fillMaxWidth()
+            .alpha(alpha), // A bit hacky, but doesn't move layout when appearing
+        maxLines = 1,
+    )
 }
 
 @Composable
 private fun FieldStateIndicator(
     fieldState: FieldState,
 ) {
-    // TODO: Moves layout on visibility change
-    if (fieldState is FieldState.Error) {
-        Text(
-            text = stringResource(fieldState.messageResId),
-            color = MaterialTheme.colorScheme.error,
-            style = MaterialTheme.typography.bodySmall,
-            modifier = Modifier.padding(top = 4.dp),
-        )
-    } else {
-        Spacer(modifier = Modifier.height(20.dp))
-    }
+    val errorText = (fieldState as? FieldState.Error)?.let { stringResource(it.messageResId) }
+    val text = errorText ?: " "
+    val alpha = if (errorText != null) 1f else 0f
+
+    Text(
+        text = text,
+        color = MaterialTheme.colorScheme.error,
+        style = MaterialTheme.typography.bodySmall,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 4.dp)
+            .alpha(alpha), // A bit hacky, but doesn't move layout when appearing
+        maxLines = 1,
+    )
 }
+
 
 @Composable
 private fun SentTransactionDialog(
