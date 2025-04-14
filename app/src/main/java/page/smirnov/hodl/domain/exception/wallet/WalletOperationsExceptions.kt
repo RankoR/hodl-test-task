@@ -1,5 +1,8 @@
 package page.smirnov.hodl.domain.exception.wallet
 
+/**
+ * Base class for exceptions related to wallet operations within the domain layer
+ */
 abstract class WalletException(
     message: String? = null,
 ) : Exception(message)

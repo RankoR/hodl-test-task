@@ -19,18 +19,44 @@ import page.smirnov.hodl.di.qualifier.DispatcherIO
 import page.smirnov.hodl.util.extension.flow.typedFlow
 import javax.inject.Inject
 
+/**
+ * Repository interface for interacting with the Esplora API to fetch blockchain data.
+ */
 interface EsploraApiRepository {
 
+    /**
+     * Fetches the list of Unspent Transaction Outputs (UTXOs) for a given Bitcoin address.
+     * Implements a simple time-based in-memory cache.
+     *
+     * @param address The Bitcoin address to query.
+     * @param cacheExpirationMs The duration in milliseconds for which the cached data is considered valid.
+     *                          Set to 0 to force a refresh.
+     * @return A Flow emitting the list of UTXOs
+     */
     fun getUtxo(
         address: String,
         cacheExpirationMs: Long,
     ): Flow<List<UtxoApiModel>>
 
+    /**
+     * Fetches only the *confirmed* UTXOs for a given Bitcoin address.
+     *
+     * @param address The Bitcoin address to query.
+     * @param cacheExpirationMs The duration in milliseconds for which the cached data is considered valid
+     *                          (passed down to [getUtxo]). Set to 0 to force a refresh.
+     * @return A Flow emitting the list of confirmed UTXOs.
+     */
     fun getConfirmedUtxo(
         address: String,
         cacheExpirationMs: Long,
     ): Flow<List<UtxoApiModel>>
 
+    /**
+     * Broadcasts a signed Bitcoin transaction to the network.
+     *
+     * @param transactionHex The raw transaction in hexadecimal format.
+     * @return A Flow emitting the result containing the transaction ID (txid) upon successful broadcast.
+     */
     fun broadcastTransaction(transactionHex: String): Flow<BroadcastResultApiModel>
 }
 
@@ -50,7 +76,7 @@ internal class EsploraApiRepositoryImpl @Inject constructor(
             val utxoCache = this@EsploraApiRepositoryImpl.cachedUtxo
 
             if (utxoCache != null && now - cachedUtxoUpdateTimestamp < cacheExpirationMs) {
-                // It's actually non-null, but compiler doesn't see the smart cast for some reason, so leaving as is for now due to lack of time
+                // It's actually non-null, but compiler can't use the smart cast for some reason, so leaving as is for now due to lack of time
                 return@typedFlow requireNotNull(utxoCache)
             }
 
@@ -83,11 +109,13 @@ internal class EsploraApiRepositoryImpl @Inject constructor(
             httpClient
                 .post(EsploraApiResource.Transactions()) {
                     setBody(transactionHex)
+
+                    // API expects plain text for the transaction hex
                     contentType(ContentType.Any)
 
                     expectSuccess = true
                 }
-                .body<String>()
+                .body<String>() // API returns the txid as a plain string in the response body
         }.map { txId ->
             BroadcastResultApiModel(
                 txId = txId,

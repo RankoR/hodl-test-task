@@ -11,13 +11,38 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.withContext
 import page.smirnov.hodl.data.model.encryption.EncryptedData
 
+/**
+ * Interface for storing and retrieving string values securely
+ */
 interface EncryptedPreferences {
+    /**
+     * Encrypts and stores a string value associated with a key.
+     *
+     * @param key The key to store the value under.
+     * @param value The plaintext string value to encrypt and store.
+     */
     suspend fun putString(key: String, value: String)
+
+    /**
+     * Retrieves and decrypts a string value associated with a key.
+     *
+     * @param key The key whose associated value is to be retrieved.
+     * @return A Flow emitting the decrypted plaintext string.
+     * @throws NoKeyException if no value (or its IV) is found for the given key.
+     *         Other exceptions may be thrown if decryption fails.
+     */
     fun getString(key: String): Flow<String>
 
+    /**
+     * Thrown when the given key does not exist
+     */
     class NoKeyException : Exception()
 }
 
+/**
+ * Implementation of [EncryptedPreferences] using Jetpack DataStore and a [DataEncryptor].
+ * Stores the Base64 encoded encrypted data and its Base64 encoded IV under separate keys.
+ */
 class EncryptedPreferencesImpl(
     private val preferences: DataStore<Preferences>,
     private val dataEncryptor: DataEncryptor,
@@ -43,7 +68,7 @@ class EncryptedPreferencesImpl(
 
     override fun getString(key: String): Flow<String> {
         return preferences.data
-            .take(1)
+            .take(1) // DataStore emits whenever data changes. We only need the current value once
             .mapNotNull { preferences ->
                 val encryptedKey = stringPreferencesKey(key)
                 val ivKey = stringPreferencesKey("$key$IV_SUFFIX")

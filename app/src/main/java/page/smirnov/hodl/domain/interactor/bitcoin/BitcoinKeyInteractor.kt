@@ -11,7 +11,16 @@ import page.smirnov.hodl.di.qualifier.DispatcherDefault
 import page.smirnov.hodl.domain.model.bitcoin.BitcoinKeyState
 import javax.inject.Inject
 
+/**
+ * Interactor responsible for providing reactive access to the current state of the user's Bitcoin key.
+ * It handles the initial loading or creation of the key.
+ */
 interface BitcoinKeyInteractor {
+    /**
+     * A [StateFlow] emitting the current [BitcoinKeyState].
+     * Starts with [BitcoinKeyState.Unknown] and transitions to [BitcoinKeyState.Present]
+     * if a key is loaded/created successfully, or [BitcoinKeyState.Error] if an issue occurs.
+     */
     val bitcoinKey: StateFlow<BitcoinKeyState>
 }
 
@@ -33,9 +42,13 @@ internal class BitcoinKeyInteractorImpl @Inject constructor(
     }
 
     /**
-     * Load or create bitcoin key if not exist.
-     * NOTE: This is a simple implementation that creates key transparently for user.
-     * In a real app we should split this process to show mnemonic to user and perform other onboarding actions
+     * Attempts to load an existing Bitcoin key from the repository. If no key exists
+     * ([BitcoinKeyRepository.NoKeyException]), it triggers the creation of a new key.
+     * Updates the [bitcoinKey] StateFlow with the result ([BitcoinKeyState.Present] or [BitcoinKeyState.Error]).
+     *
+     * NOTE: This is a simplified implementation that creates a key transparently for the user.
+     * In a real wallet app, the key creation process would involve user interaction
+     * (e.g., showing the mnemonic, requiring confirmation).
      */
     private fun initializeBitcoinKey() {
         coroutineScope.launch {

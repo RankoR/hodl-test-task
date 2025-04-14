@@ -23,12 +23,41 @@ import java.security.SecureRandom
 import java.time.Instant
 import javax.inject.Inject
 
+/**
+ * Repository responsible for managing the lifecycle of the user's Bitcoin key.
+ * This includes securely storing, retrieving, and generating the key based on a mnemonic seed.
+ */
 interface BitcoinKeyRepository {
+
+    /**
+     * Retrieves the stored Bitcoin key.
+     *
+     * @return A Flow emitting the [BitcoinKey].
+     * @throws NoKeyException if no key (seed mnemonic) is currently stored.
+     * @throws KeyDecodeException if the stored mnemonic is invalid or key derivation fails.
+     */
     fun getKey(): Flow<BitcoinKey>
+
+    /**
+     * Creates a new random Bitcoin key, stores it securely, and returns the derived key.
+     *
+     * @return A Flow emitting the newly generated [BitcoinKey].
+     */
     fun createKey(): Flow<BitcoinKey>
 
+    /**
+     * Base exception
+     */
     open class KeyException(message: String? = null) : Exception(message)
+
+    /**
+     * Thrown when attempting to retrieve a key but none is stored
+     */
     class NoKeyException : KeyException()
+
+    /**
+     * Thrown when decoding the stored mnemonic or deriving the key fails
+     */
     class KeyDecodeException(message: String?) : KeyException(message)
 }
 
@@ -132,9 +161,11 @@ internal class BitcoinKeyRepositoryImpl @Inject constructor(
     private companion object {
         private const val LOG_TAG = "BitcoinKeyRepository"
 
+        // Using an empty passphrase for simplicity in this test task.
         private const val PASSPHRASE = ""
         private const val SEED_PREFERENCE_KEY = "seed_mnemonic"
 
+        // 128 bits
         private const val SEED_ENTROPY_SIZE_BYTES = 16
     }
 }

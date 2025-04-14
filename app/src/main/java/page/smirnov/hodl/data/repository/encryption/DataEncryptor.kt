@@ -15,8 +15,24 @@ import javax.crypto.SecretKey
 import javax.crypto.spec.GCMParameterSpec
 import javax.inject.Inject
 
+/**
+ * Interface for encrypting and decrypting data using the Android Keystore system.
+ */
 interface DataEncryptor {
+    /**
+     * Encrypts the given string using a securely stored key.
+     *
+     * @param string The plaintext string to encrypt.
+     * @return [EncryptedData] containing the ciphertext and necessary IV.
+     */
     suspend fun encryptString(string: String): EncryptedData
+
+    /**
+     * Decrypts the given [EncryptedData] using the securely stored key.
+     *
+     * @param encryptedData The data to decrypt (ciphertext and IV).
+     * @return The original plaintext string.
+     */
     suspend fun decryptString(encryptedData: EncryptedData): String
 }
 
@@ -73,7 +89,8 @@ internal class DataEncryptorImpl @Inject constructor(
     }
 
     /**
-     * Gets an existing secret key from the KeyStore
+     * Attempts to retrieve an existing secret key with the predefined alias from the Android Keystore.
+     * @return [SecretKey] or null if the key doesn't exist or if the entry is not a SecretKey.
      */
     private suspend fun getSecretKey(): SecretKey? {
         return withContext(ioDispatcher) {
@@ -81,7 +98,6 @@ internal class DataEncryptorImpl @Inject constructor(
                 return@withContext null
             }
 
-            // Ensure it's actually a SecretKey before casting
             val key = keyStore.getKey(KEY_ALIAS, null)
             if (key is SecretKey) {
                 key
@@ -96,6 +112,7 @@ internal class DataEncryptorImpl @Inject constructor(
 
     /**
      * Creates a new secret key in the KeyStore
+     * @return Created [SecretKey]
      */
     private suspend fun createSecretKey(): SecretKey {
         return withContext(ioDispatcher) {

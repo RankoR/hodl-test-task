@@ -1,6 +1,10 @@
 package page.smirnov.hodl.domain.model.wallet
 
-// Not the best naming, but OK for now
+/**
+ * Represents the successful result of a send operation.
+ * Contains information about the broadcasted transaction.
+ * Naming is okay for this simple case, but could be more specific like `TransactionBroadcastResult` in a larger app.
+ */
 data class SendResult(
     val txId: String,
 )

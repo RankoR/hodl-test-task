@@ -1,5 +1,9 @@
 package page.smirnov.hodl.data.model.encryption
 
+/**
+ * Holds the result of an encryption operation, typically containing the ciphertext
+ * and the Initialization Vector (IV) required for decryption
+ */
 data class EncryptedData(
     val data: ByteArray,
     val iv: ByteArray,
