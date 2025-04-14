@@ -39,8 +39,8 @@ This project was developed as a test task for HodlHodl.
 
 ## 🛠️ Tech Stack & Architecture
 
-* **Architecture:** Clean Architecture (Data -> Domain -> UI) + MVVM
-* **UI:** Jetpack Compose, Material 3, Compose Navigation (via Hilt)
+* **Architecture:** Clean Architecture + MVVM
+* **UI:** Jetpack Compose, Material 3
 * **Asynchronous Programming:** Kotlin Coroutines & Flow
 * **Dependency Injection:** Hilt
 * **Networking:** Ktor Client (for Esplora API)
@@ -127,7 +127,7 @@ While functional for its core purpose, this app was built as a test task and has
 - - More sophisticated fee estimation (e.g., fetching current network fee rates).
 - - Dynamic balance precision (e.g., show 0 BTC instead of 0.00000000 BTC).
 - - Display equivalent fiat value (requires price feed integration).
-- - Support for different Bitcoin networks (Mainnet, Testnet) configurable at build time or runtime.
+- - Support for different Bitcoin networks configurable at build time or runtime.
 - **UI/UX:**
 - - Improved error handling and user feedback.
 - - Better support for various screen sizes and landscape orientation.
